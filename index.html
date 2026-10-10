@@ -851,6 +851,14 @@
               value="7292cbaf-7d85-4dd6-bd82-ad622eeccd9a"
             />
 
+            <input
+              type="checkbox"
+              name="botcheck"
+              style="display: none"
+              tabindex="-1"
+              autocomplete="off"
+            />
+
             <div>
               <input
                 type="email"
@@ -870,6 +878,7 @@
                 class="pdf-input w-full text-lg resize-none"
               ></textarea>
             </div>
+            <div class="h-captcha" data-captcha="true"></div>
             <button
               type="submit"
               id="submitBtn"
@@ -1178,6 +1187,17 @@
         contactForm.addEventListener("submit", async function (e) {
           e.preventDefault();
 
+          // Validasi captcha di sisi klien
+          const captchaField = contactForm.querySelector(
+            "textarea[name=h-captcha-response]",
+          );
+          if (!captchaField || !captchaField.value) {
+            formStatus.classList.remove("hidden", "text-green-400");
+            formStatus.classList.add("text-red-500");
+            formStatus.innerText = "Please complete the captcha.";
+            return;
+          }
+
           submitBtn.innerText = "SENDING...";
           submitBtn.disabled = true;
 
@@ -1206,6 +1226,7 @@
           } finally {
             submitBtn.innerText = "SUBMIT";
             submitBtn.disabled = false;
+            if (window.hcaptcha) window.hcaptcha.reset(); // token hCaptcha hanya sekali pakai
           }
         });
       }
@@ -1245,5 +1266,6 @@
         a.addEventListener("click", () => mm.classList.add("hidden")),
       );
     </script>
+    <script src="https://web3forms.com/client/script.js" async defer></script>
   </body>
 </html>
